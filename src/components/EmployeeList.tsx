@@ -1,14 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import "./EmployeeList.css";
 import { IEmployee } from "./Employee.type";
+import EmployeeModal from "./EmployeeModal";
 
 type Props = {
   list: IEmployee[];
+  onDeleteHandler: (data: IEmployee) => void;
+  onEdit: (data: IEmployee) => void;
 };
 const EmployeeList = (props: Props) => {
-  const { list } = props;
+  const { list, onDeleteHandler, onEdit } = props;
+  const [showModal, setShowModal] = useState(false);
+  const [datashow, setDatashow] = useState(null as IEmployee | null);
+  const viewEmployee = (data: IEmployee) => {
+    setDatashow(data);
+    setShowModal(true);
+  };
+  const onCloseModal = () => {
+    setShowModal(false);
+  };
+
   return (
     <div>
+      <article className="list-header">
+        <h3>Add Employee</h3>
+      </article>
       <table>
         <thead>
           <tr>
@@ -28,15 +44,30 @@ const EmployeeList = (props: Props) => {
               <td>{employee.email}</td>
               <td>
                 <div>
-                  <input type="button" value="View" />
-                  <input type="button" value="Edit" />
-                  <input type="button" value="Delete" />
+                  <input
+                    type="button"
+                    value="View"
+                    onClick={() => viewEmployee(employee)}
+                  />
+                  <input
+                    type="button"
+                    value="Edit"
+                    onClick={()=> onEdit(employee)}
+                  />
+                  <input
+                    type="button"
+                    value="Delete"
+                    onClick={() => onDeleteHandler(employee)}
+                  />
                 </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      {showModal && datashow !== null && (
+        <EmployeeModal onClose={onCloseModal} data={datashow} />
+      )}
     </div>
   );
 };
